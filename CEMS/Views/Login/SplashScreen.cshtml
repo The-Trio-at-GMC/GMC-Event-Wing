@@ -1,0 +1,29 @@
+@{
+    Layout = null;
+}
+
+<head>
+    <title>Welcome - CEMS</title>
+    <link rel="stylesheet" href="~/css/splashscreen.css" />
+</head>
+
+<body id="body">
+
+    <img src="~/images/EventWingLogo.png" class="logo" />
+
+<script>
+        // Wait 2 seconds
+        setTimeout(function () {
+
+            // Add fade-out class
+            document.getElementById("body").classList.add("fade-out");
+
+            // Redirect after fade completes
+            setTimeout(function () {
+                window.location.href = "/Login/Login";
+            }, 1000);
+
+        }, 3000);
+    </script>
+
+</body>
