@@ -9,7 +9,27 @@ namespace CEMS.Controllers
             return View();
         }
 
-        public IActionResult Login()
+        public IActionResult LoginPage()
+        {
+            return View();
+        }
+
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        public IActionResult SendResetCode()
+        {
+            return RedirectToAction("VerifyResetCode", "Login");
+        }
+
+        public IActionResult VerifyResetCode()
+        {
+            return View();
+        }
+
+        public IActionResult ResetPassword()
         {
             return View();
         }
