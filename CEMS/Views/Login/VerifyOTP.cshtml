@@ -3,7 +3,7 @@
 }
 
 <head>
-    <title>Reset Password - CEMS</title>
+    <title>Verify OTP- CEMS</title>
     <link rel="stylesheet" href="~/css/loginpage.css" />
 </head>
 
@@ -13,13 +13,17 @@
 
         <h1>GMC Event Wing</h1>
         <br>
-        <h3>Reset your password</h3>
+        <h3>Verify your OTP</h3>
 
-        <form asp-action="SendResetLink" method="post">
+        <p class="info-text">
+            Use the OTP sent to your email.
+        </p>
 
-            <input name="email" type="email" placeholder="Enter your registered email" required />
+        <form asp-action="VerifyOTP" method="post">
 
-            <button type="submit" class="login-btn"> Get a Reset Link </button>
+            <input name="code" placeholder="Enter OTP" required />
+
+            <button type="submit" class="login-btn"> Verify OTP </button>
 
         </form>
 

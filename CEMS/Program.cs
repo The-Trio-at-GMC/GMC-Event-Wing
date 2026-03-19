@@ -1,7 +1,19 @@
+using CEMS.Data;
+using CEMS.Services;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+//Essential during migrations
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+//For password reset link via email
+builder.Services.AddScoped<EmailService>();
 
 var app = builder.Build();
 

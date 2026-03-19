@@ -86,6 +86,6 @@ body {
 
 .error-message {
     margin-top: 15px;
-    color: #E57373;
-    font-size: 14px;
+    color: maroon;
+    font-size: 16px;
 }
