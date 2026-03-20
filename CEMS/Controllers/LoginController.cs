@@ -106,7 +106,7 @@ namespace CEMS.Controllers
                 <p>Warning: This link expires in 15 minutes.</p>
             ";
 
-            _emailService.SendEmail(user.Email, "GMC Event Wing: Reset Your Password", body);
+            _emailService.SendEmail(user.Email, "Reset Your Password", body);
 
             return RedirectToAction("LoginPage");
         }
