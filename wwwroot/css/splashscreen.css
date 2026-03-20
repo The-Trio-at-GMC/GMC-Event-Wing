@@ -1,0 +1,31 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: #142941;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    overflow: hidden;
+
+    opacity: 1;
+    transition: opacity 1s ease-in-out;
+}
+
+.logo {
+    width: 300px;
+    animation: float 2s ease-in-out infinite;
+}
+
+/*Floating animation with reference to the above-mentioned 'float'*/
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+.fade-out {
+    opacity: 0;
+}
