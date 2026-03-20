@@ -1,0 +1,62 @@
+@{
+    Layout = null;
+}
+
+<head>
+    <title>Login Page - CEMS</title>
+    <link rel="stylesheet" href="~/css/loginpage.css"/>
+</head>
+
+<body class="login-body">
+
+<div class="login-card">
+    <h1>GMC Event Wing</h1>
+
+    <form id="loginForm" method="post" asp-controller="Login" asp-action="LoginPage">
+        <br>
+        <input type="text" name="username" placeholder="Username" required/>
+        <br>
+        <input type="password" name="password" placeholder="Password" required/>
+        <br>
+        <button type="submit" class="login-btn">Login</button>
+        <br>
+        <br>
+        <p class="link" onclick="showForgotPassword()">Forgot password?</p>
+        <p class="link" onclick="showSignup()">New here? Register</p>
+    </form>
+    
+    <form id="signupForm" method="post" asp-controller="Login" asp-action="SignUp" style="display:none;">
+        <input type="email" name="email" placeholder="Email" required />
+        <input type="text" name="username" placeholder="Username" required />
+        <input type="password" name="password" placeholder="Password" required />
+        <input type="password" name="confirmPassword" placeholder="Confirm Password" required />
+
+        <button type="submit" class="login-btn">Sign Up</button>
+
+        <p class="link" onclick="showLogin()">Already have an account? Login</p>
+    </form>
+    
+    @if (ViewBag.Error != null)
+    {
+        <p class="error-message">@ViewBag.Error</p>
+    }
+</div>
+
+<script>
+    function showLogin() {
+        document.getElementById("loginForm").style.display = "block";
+        document.getElementById("signupForm").style.display = "none";
+    }
+
+    function showSignup() {
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("signupForm").style.display = "block";
+    }
+
+    function showForgotPassword() {
+        window.location.href = "/Login/ForgotPassword";
+    }
+</script>
+
+</body>
+
