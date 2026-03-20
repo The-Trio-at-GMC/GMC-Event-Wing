@@ -1,5 +1,5 @@
+using CEMS;
 using CEMS.Data;
-using CEMS.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,9 +11,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
-//For password reset link via email
-builder.Services.AddScoped<EmailService>();
+//DI registration
+builder.Services.ConfigureServices();
 
 var app = builder.Build();
 

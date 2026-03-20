@@ -10,7 +10,7 @@ namespace CEMS.Controllers
         private readonly ApplicationDbContext _context;
         private readonly EmailService _emailService;
 
-        //Injecting Services and Db
+        //Injecting Services and Db Connection that ASP.NET provides automatically, and storing them for future use
         public LoginController(ApplicationDbContext context, EmailService emailService)
         {
             _context = context;
@@ -57,8 +57,7 @@ namespace CEMS.Controllers
         [HttpPost]
         public IActionResult LoginPage(string email, string password)
         {
-            var user = _context.Users
-                .FirstOrDefault(u => u.Email == email && !u.IsDeleted);
+            var user = _context.Users.FirstOrDefault(u => u.Email == email && !u.IsDeleted);
 
             if (user == null)
             {
@@ -78,8 +77,7 @@ namespace CEMS.Controllers
         [HttpPost]
         public IActionResult SendResetLink(string email)
         {
-            var user = _context.Users
-                .FirstOrDefault(u => u.Email == email && !u.IsDeleted);
+            var user = _context.Users.FirstOrDefault(u => u.Email == email && !u.IsDeleted);
 
             if (user == null)
             {
@@ -92,12 +90,8 @@ namespace CEMS.Controllers
 
             _context.SaveChanges();
 
-            var resetLink = Url.Action(
-                "ResetPassword",
-                "Login",
-                new { token = user.ResetToken },
-                Request.Scheme
-            );
+            var resetLink = Url.Action("ResetPassword", "Login", 
+                new { token = user.ResetToken }, Request.Scheme);
 
             var body = $@"
                 <h2>Password Reset</h2>
