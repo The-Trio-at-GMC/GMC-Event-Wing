@@ -1,0 +1,135 @@
+﻿.dashboard-body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: #3B758E;
+    color: #142941;
+}
+
+.dashboard-container {
+    display: flex;
+}
+
+.sidebar {
+    width: 220px;
+    height: 100vh;
+    background: #1E3C55;
+    padding: 20px;
+    color: darkgoldenrod;
+}
+
+.logo {
+    text-align: center;
+    margin-bottom: 30px;
+
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    display: flex;
+    gap: 10px;
+    padding: 12px;
+    margin: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+
+}
+
+.sidebar ul li:hover {
+    background: #142941;
+}
+
+.sidebar ul li.active {
+    background: #142941;
+    color: darkgoldenrod;
+    font-weight: bold;
+}
+.sidebar ul li i {
+    font-size: 16px;
+}
+
+.logout {
+    margin-top: 30px;
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+}
+
+.header {
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.cards {
+    display: flex;
+    gap: 20px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    flex: 1;
+    text-align: center;
+    font-size: 18px;
+    transition: 0.3s;
+    border: 3px solid darkgoldenrod;
+}
+
+.card:hover {
+    background: white;
+    transform: scale(1.03);
+}
+
+.table-section {
+    margin-top: 30px;
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    border: 3px solid darkgoldenrod;
+}
+
+table {
+    width: 100%;
+    margin-top: 10px;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    border-bottom: 1px solid darkgoldenrod;
+    text-align: left;
+}
+
+.profile-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.notification {
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    color: #142941;
+}
+
+.clock {
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+}
+
+.notification i {
+    font-size: 20px;
+}
