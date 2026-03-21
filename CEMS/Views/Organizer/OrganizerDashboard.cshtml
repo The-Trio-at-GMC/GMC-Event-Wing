@@ -1,0 +1,88 @@
+﻿@{
+    Layout = null;
+}
+<head>
+    <title>Organizer Dashboard</title>
+
+    <link rel="stylesheet" href="~/css/admindashboard.css" />
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+
+<body class="dashboard-body"> 
+
+<div class="dashboard-container">
+    
+    <div class="sidebar">
+        <h2 class="logo">GMC Event Wing</h2>
+
+        <ul id="menu">
+            <li class="active"><i class="fa fa-home"></i> Dashboard</li>
+            <li><i class="fa fa-plus-circle"></i> Create Event</li>
+            <li><i class="fa fa-calendar"></i> My Events</li>
+            <li><i class="fa fa-users"></i> Participants</li>
+            <li><i class="fa fa-chart-bar"></i> Reports</li>
+            <li><i class="fa fa-cog"></i> Settings</li>
+            <li class="logout"><i class="fa fa-sign-out-alt"></i> Logout</li>
+        </ul>
+    </div>
+    
+    <div class="main-content">
+        
+        <div class="header">
+            <h2>Welcome, Organizer</h2>
+
+            <div class="profile-section">
+                <div class="notification" onclick="openNotification()">
+                    <i class="fa fa-bell"></i>
+                    <span class="badge"></span>
+                </div>
+                <div class="clock" id="clock"></div>
+
+            </div>
+        </div>
+        
+        <div class="cards">
+            <div class="card">My Events<br><strong>0</strong></div>
+            <div class="card">Participants<br><strong>0</strong></div>
+            <div class="card">Pending Approval<br><strong>0</strong></div>
+            <div class="card">Completed Events<br><strong>0</strong></div>
+        </div>
+        
+        <div class="table-section">
+            <h3>Recent Activities</h3>
+            <table>
+                <tr>
+                    <th>Event</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+</body>
+
+<script>
+    function updateTime() {
+        const now = new Date();
+        document.getElementById("clock").innerText =
+            now.toLocaleTimeString();
+    }
+    setInterval(updateTime, 1000);
+    
+    function openNotification(){
+        alert("No new notifications");
+    }
+    
+    const menuItems = document.querySelectorAll("#menu li");
+
+    menuItems.forEach(item => {
+        item.addEventListener("click", function () {
+            menuItems.forEach(i => i.classList.remove("active"));
+            this.classList.add("active");
+        });
+    });
+</script>
