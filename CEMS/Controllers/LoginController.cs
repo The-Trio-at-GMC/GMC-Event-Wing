@@ -59,19 +59,47 @@ namespace CEMS.Controllers
         {
             var user = _context.Users.FirstOrDefault(u => u.Email == email && !u.IsDeleted);
 
-            if (user == null)
+            if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
             {
                 ViewBag.Error = "Invalid email or password!";
                 return View();
             }
-            
-            if (!BCrypt.Net.BCrypt.Verify(password, user.Password))
+
+            //Checking if the device is remembered
+            var rememberedToken = Request.Cookies["RememberDevice"];
+
+            if (!string.IsNullOrEmpty(rememberedToken) &&
+                rememberedToken == user.DeviceToken &&
+                user.DeviceTokenExpiry > DateTime.UtcNow)
             {
-                ViewBag.Error = "Invalid email or password!";
-                return View();
+                return RedirectToAction("LoginSuccess");
             }
             
-            return RedirectToAction("LoginPage");
+            if (user.DeviceTokenExpiry != null &&
+                user.DeviceTokenExpiry <= DateTime.UtcNow)
+            {
+                user.DeviceToken = null;
+                user.DeviceTokenExpiry = null;
+                _context.SaveChanges();
+            }
+
+            //Generating OTP
+            var otp = new Random().Next(100000, 999999).ToString();
+
+            user.OTP = otp;
+            user.OTPExpiry = DateTime.UtcNow.AddMinutes(5);
+
+            _context.SaveChanges();
+
+            //Sending email for OTP
+            var body = $"Your OTP for 2FA is: <b>{otp}</b>";
+
+            _emailService.SendEmail(user.Email, "Verify it's You", body);
+            
+            //Storing email temporarily
+            TempData["UserEmail"] = user.Email;
+
+            return RedirectToAction("VerifyOtp");
         }
 
         [HttpPost]
@@ -145,6 +173,72 @@ namespace CEMS.Controllers
             _context.SaveChanges();
 
             return RedirectToAction("LoginPage");
+        }
+
+        public IActionResult VerifyOtp()
+        {
+            TempData.Keep("UserEmail");
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult VerifyOtp(string code, bool rememberDevice)
+        {
+            var email = TempData["UserEmail"]?.ToString();
+
+            if (email == null)
+            {
+                return RedirectToAction("LoginPage");
+            }
+
+            var user = _context.Users.FirstOrDefault(u => u.Email == email);
+
+            if (user == null || user.OTP != code || user.OTPExpiry < DateTime.UtcNow)
+            {
+                ViewBag.Error = "Invalid or expired OTP!";
+                return View();
+            }
+
+            //Clearing OTP
+            user.OTP = null;
+            user.OTPExpiry = null;
+            _context.SaveChanges();
+
+            //Saving cookie in the browser
+            if (rememberDevice)
+            {
+                var deviceToken = Guid.NewGuid().ToString();
+
+                user.DeviceToken = deviceToken;
+                user.DeviceTokenExpiry = DateTime.UtcNow.AddDays(1); //1-day validity
+
+                _context.SaveChanges();
+
+                Response.Cookies.Append("RememberDevice", deviceToken,
+                    //cookie settings
+                    new CookieOptions
+                    {
+                        Expires = DateTime.UtcNow.AddDays(1),
+                        
+                        //Only the server can read this cookie. JavaScript in the browser CANNOT. Thus, prevents XSS.
+                        HttpOnly = true,
+                        
+                        //Even HTTP works...
+                        Secure = false, //for localhost
+                        
+                        //To prevent CSRF (Cross-Site Request Forgery)
+                        SameSite = SameSiteMode.Lax, //cookie sent for normal navigation only
+                        
+                        IsEssential = true //cookie is required
+                    });
+            }
+            
+            return RedirectToAction("LoginSuccess");
+        }
+
+        public IActionResult LoginSuccess()
+        {
+            return Content("Login successful, you Beauty^.^");
         }
     }
 }
