@@ -16,7 +16,19 @@ namespace CEMS.Data
             optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
         }
         
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<UserRole>()
+                .HasKey(ur => new { ur.UserId, ur.RoleId });
+        }
+        
         //Stating the formation of so-and-so database tables.
         public DbSet<User> Users { get; set; }
+        
+        public DbSet<Role> Roles { get; set; }
+        
+        public DbSet<UserRole> UserRoles { get; set; }
     }
 }
