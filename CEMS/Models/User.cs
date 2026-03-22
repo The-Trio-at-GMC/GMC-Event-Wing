@@ -24,6 +24,14 @@ namespace CEMS.Models
         public string? ResetToken { get; set; }
         
         public DateTime? ResetTokenExpiry { get; set; }
+        
+        public string? OTP { get; set; }
+        
+        public DateTime? OTPExpiry { get; set; }
+        
+        public string? DeviceToken { get; set; }
+        
+        public DateTime? DeviceTokenExpiry { get; set; }
 
     }
 }

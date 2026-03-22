@@ -3,7 +3,7 @@
 }
 
 <head>
-    <title>Verify OTP- CEMS</title>
+    <title>Verify OTP - CEMS</title>
     <link rel="stylesheet" href="~/css/loginpage.css" />
 </head>
 
@@ -19,9 +19,15 @@
             Use the OTP sent to your email.
         </p>
 
-        <form asp-action="VerifyOTP" method="post">
+        <form asp-action="VerifyOtp" method="post">
 
             <input name="code" placeholder="Enter OTP" required />
+            
+            <label for="rememberDevice" class="link">
+                <input type="checkbox" name="rememberDevice" id="rememberDevice" value="true">
+                Remember this Device
+            </label>
+
 
             <button type="submit" class="login-btn"> Verify OTP </button>
 
