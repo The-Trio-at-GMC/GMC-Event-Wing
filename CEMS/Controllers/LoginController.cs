@@ -10,19 +10,54 @@ namespace CEMS.Controllers
         private readonly ApplicationDbContext _context;
         private readonly EmailService _emailService;
 
-        //Injecting Services and Db Connection that ASP.NET provides automatically, and storing them for future use
         public LoginController(ApplicationDbContext context, EmailService emailService)
         {
             _context = context;
             _emailService = emailService;
         }
 
-        //Returning views simply
         public IActionResult SplashScreen() => View();
 
         public IActionResult LoginPage() => View();
 
         public IActionResult ForgotPassword() => View();
+        
+        //Admin seeding
+        public void SeedData()
+        {
+            if (!_context.Roles.Any())
+            {
+                _context.Roles.AddRange(
+                    new Role { Name = "Admin" },
+                    new Role { Name = "Organizer" },
+                    new Role { Name = "Student" }
+                );
+                _context.SaveChanges();
+            }
+
+            if (!_context.Users.Any(u => u.Email == "adminbruh@gmail.com"))
+            {
+                var admin = new User
+                {
+                    Email = "adminbruh@gmail.com",
+                    Username = "Admin",
+                    Password = BCrypt.Net.BCrypt.HashPassword("Admin@123")
+                };
+
+                _context.Users.Add(admin);
+                _context.SaveChanges();
+
+                var adminRole = _context.Roles.First(r => r.Name == "Admin");
+
+                _context.UserRoles.Add(new UserRole
+                {
+                    UserId = admin.Id,
+                    RoleId = adminRole.Id
+                });
+
+                _context.SaveChanges();
+            }
+        }
         
         [HttpPost]
         public IActionResult SignUp(string email, string username, string password, string confirmPassword)
@@ -45,10 +80,20 @@ namespace CEMS.Controllers
             {
                 Email = email,
                 Username = username,
-                Password = BCrypt.Net.BCrypt.HashPassword(password) //Hashing's been applied here
+                Password = BCrypt.Net.BCrypt.HashPassword(password)
             };
 
             _context.Users.Add(user);
+            _context.SaveChanges();
+            
+            var studentRole = _context.Roles.First(r => r.Name == "Student");
+
+            _context.UserRoles.Add(new UserRole
+            {
+                UserId = user.Id,
+                RoleId = studentRole.Id
+            });
+
             _context.SaveChanges();
 
             return RedirectToAction("LoginPage");
@@ -64,6 +109,16 @@ namespace CEMS.Controllers
                 ViewBag.Error = "Invalid email or password!";
                 return View();
             }
+
+            //Determining user's role before heading towards the specific dashboard
+            var role = (from ur in _context.UserRoles
+                        join r in _context.Roles on ur.RoleId equals r.Id
+                        where ur.UserId == user.Id
+                        select r.Name).FirstOrDefault();
+
+            //Storing in session for role-based navigation
+            HttpContext.Session.SetString("UserRole", role);
+            HttpContext.Session.SetString("UserId", user.Id.ToString());
 
             //Checking if the device is remembered
             var rememberedToken = Request.Cookies["RememberDevice"];
@@ -215,21 +270,13 @@ namespace CEMS.Controllers
                 _context.SaveChanges();
 
                 Response.Cookies.Append("RememberDevice", deviceToken,
-                    //cookie settings
                     new CookieOptions
                     {
                         Expires = DateTime.UtcNow.AddDays(1),
-                        
-                        //Only the server can read this cookie. JavaScript in the browser CANNOT. Thus, prevents XSS.
                         HttpOnly = true,
-                        
-                        //Even HTTP works...
-                        Secure = false, //for localhost
-                        
-                        //To prevent CSRF (Cross-Site Request Forgery)
-                        SameSite = SameSiteMode.Lax, //cookie sent for normal navigation only
-                        
-                        IsEssential = true //cookie is required
+                        Secure = false,
+                        SameSite = SameSiteMode.Lax,
+                        IsEssential = true
                     });
             }
             
@@ -238,7 +285,16 @@ namespace CEMS.Controllers
 
         public IActionResult LoginSuccess()
         {
-            return Content("Login successful, you Beauty^.^");
+            //Role-based redirection
+            var role = HttpContext.Session.GetString("UserRole");
+
+            if (role == "Admin")
+                return RedirectToAction("AdminDashboard", "Admin");
+
+            if (role == "Organizer")
+                return RedirectToAction("OrganizerDashboard", "Organizer");
+
+            return Content("Hey, Student! Timro dashboard Bhawsie sanga chha ki uta bata push vayesi dekhauchhu, la?");
         }
     }
 }
